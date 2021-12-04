@@ -9,6 +9,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.Text;
 
 public class SentimentMain extends Configured implements Tool {
@@ -19,12 +20,8 @@ public class SentimentMain extends Configured implements Tool {
     }
 	
 	public int run(String[] args) throws Exception {
-		
-		Configuration conf =  new Configuration();
-		conf.set("mapreduce.output.textoutputformat.separator", ",");
-		conf.set("textinputformat.record.delimiter", Character.toString((char)13));
-
-		Job job = Job.getInstance(conf, "Sentiment Analysis: phase 1");
+		getConf().set("mapreduce.output.textoutputformat.separator", ",");
+		Job job = Job.getInstance(getConf());
 
 		job.setJarByClass(SentimentMain.class);
 		
@@ -36,6 +33,7 @@ public class SentimentMain extends Configured implements Tool {
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
 		
+		System.out.println("OKAY!");
 		// set input/output paths
 		FileInputFormat.addInputPath(job, new Path(args[0]));
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));

@@ -13,8 +13,8 @@ public class SentimentAnalyze {
   		posWords = new HashSet<String>();
   	  	negWords = new HashSet<String>();
 
-  	  	Scanner negScanner = new Scanner(new File("/Users/thai/Documents/Git/YelpHadoopSentimentAnalysis/src/wordsFile/neg_words.txt"));
-  	  	Scanner posScanner = new Scanner(new File("/Users/thai/Documents/Git/YelpHadoopSentimentAnalysis/src/wordsFile/pos_words.txt"));
+  	  	Scanner negScanner = new Scanner(new File("../YelpSentimentAnalysis/src/main/data/neg_words.txt"));
+  	  	Scanner posScanner = new Scanner(new File("../YelpSentimentAnalysis/src/main/data/pos_words.txt"));
   	  	
   	  	// initialize and read in pos/neg words
   	  	while (posScanner.hasNext()) {
@@ -28,14 +28,19 @@ public class SentimentAnalyze {
   	  	negScanner.close();
   	}
 	
+  	
   public float getRating(String input){
-    // removing all non alphabetic/numbers
+	if(input == null || input.isEmpty()) return 0f;
+	
+    // preprocessing + cleaning up possible dirty data
 	input = input.toLowerCase();
 	input = input.trim();
+	
+	// keep only alphanumeric characters
 	input = input.replaceAll("[^a-zA-Z0-9\\s]", "");
 
-    int negCount = 0;
-    int posCount = 0;
+    float negCount = 0;
+    float posCount = 0;
     
     for(String word: input.split(" ")) {
     	if(posWords.contains(word)) {
@@ -48,6 +53,17 @@ public class SentimentAnalyze {
     float netSentiment = posCount - negCount;
     float total = posCount + negCount;
     
-    return netSentiment / total;
+    return total == 0 ? 0f : netSentiment / total;
+  }
+  
+  public static void main(String[] args) {
+	  String input = "This is a course about the Transformers good library";
+	  try {
+		SentimentAnalyze analyzer = new SentimentAnalyze();
+		System.out.println(analyzer.getRating(input));
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
   }
 }
